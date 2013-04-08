@@ -83,6 +83,7 @@ public class Manoeuvre {
 			
 			//Arrêt de la musique
 			son = false;
+			if(playMusic != null && playMusic.isAlive())
 			playMusic.interrupt();
 			
 			//Arrête les moteurs de façon ralentie
@@ -140,12 +141,13 @@ public class Manoeuvre {
 		
 		//Calcul de la vitesse en m/s
 		double[] tab = {(0.0055 * puissance)/10, PP_K2000.distance};
-		
 		//Renvoie de la vitesse en m/s
 		try {
 			byte[] byt = toByteArray(tab);
+
 			PP_K2000.dos.write(byt, 0, byt.length);
 			PP_K2000.dos.flush();
+			
 		} catch (Exception e) {
 			LCD.clear();
 			PP_K2000.isrunning = false;

@@ -100,7 +100,7 @@ public class PP_K2000 {
 		    dis.close();	 					
 			
 		}catch(Exception ex){
-			System.out.println(ex.toString());
+			System.out.println(ex.getMessage());
 		}
 	}
 	

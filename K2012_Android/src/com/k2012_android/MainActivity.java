@@ -3,13 +3,13 @@ package com.k2012_android;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
-import org.jfree.util.Log;
 import com.k2012_android.R;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
@@ -26,8 +26,8 @@ public class MainActivity extends Activity {
 	ImageView ring = null;
 	TextView textPuissance = null;	
 	Switch switchConnexion = null;
-	public static TextView textDistance = null;
-	public static TextView textVitesse = null;
+	TextView textDistance = null;
+	TextView textVitesse = null;
 	
 	int timeActivity = 4; //Temps d'affichage des toast
 	float rayon = 150f;//Rayon du cercle
@@ -40,6 +40,9 @@ public class MainActivity extends Activity {
 		//Méthodes de base de création de la fenêtre
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		
+	       Log.d("K2012", "onCreate");
 			
 		//Récupération des éléments
 		stop = (Button)findViewById(R.id.button1);
@@ -73,9 +76,9 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			double[] info = { 1664.00, 0.00};
-			if (bluetoothSoc != null){				
+			if (bluetoothSoc != null && bluetoothSoc.IsRunning()){				
 				try {
-					bluetoothSoc.outStream.write(toByteArray(info),0,toByteArray(info).length);
+					bluetoothSoc.send(info);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -99,7 +102,7 @@ public class MainActivity extends Activity {
 			double[] info = { 8888.00, 0.00};
 			if (bluetoothSoc != null){				
 				try {
-					bluetoothSoc.outStream.write(toByteArray(info),0,toByteArray(info).length);
+					bluetoothSoc.send(info);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -122,7 +125,7 @@ public class MainActivity extends Activity {
 			double[] info = { 7777.00, 0.00};
 			if (bluetoothSoc != null){				
 				try {
-					bluetoothSoc.outStream.write(toByteArray(info),0,toByteArray(info).length);
+					bluetoothSoc.send(info);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -145,7 +148,7 @@ public class MainActivity extends Activity {
 			double[] info = { 6666.00, 0.00};
 			if (bluetoothSoc != null){				
 				try {
-					bluetoothSoc.outStream.write(toByteArray(info),0,toByteArray(info).length);
+					bluetoothSoc.send(info);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -166,23 +169,25 @@ public class MainActivity extends Activity {
 		@Override
 		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
 			if(switchConnexion.isChecked())	{
-				bluetoothSoc = new BluetoothSocketK2012();
-				
+				bluetoothSoc = new BluetoothSocketK2012(MainActivity.this);
+				bluetoothSoc.connect();
 				Thread th = new Thread(bluetoothSoc);					
 				th.start();
 			}
-			else{
+			else{/*
 				if(bluetoothSoc != null){
 					try {					
 						bluetoothSoc.outStream.close();
 						bluetoothSoc.inStream.close();
 						bluetoothSoc.socket_nxt.close();
 					} catch (IOException e) {
-						Log.error("Error Bluetooth : ", e);
+						Log.e("K2012", e.getMessage());
 					}finally{
 						bluetoothSoc = null;					
 					}
-				}
+				}*/
+				bluetoothSoc.deconnected();
+				Log.d("K2012", "Deconnected " + bluetoothSoc.IsRunning());
 			}
 		}		
 	};
@@ -211,7 +216,7 @@ public class MainActivity extends Activity {
 				if (bluetoothSoc != null){
 					
 					try {
-						bluetoothSoc.outStream.write(toByteArray(info),0,toByteArray(info).length);
+						bluetoothSoc.send(info);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -245,12 +250,16 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public byte[] toByteArray(double[] values) {
-		//Ecris un string pour la serialisation
-		DecimalFormat df = new DecimalFormat("0.000"); 
-	    String msg = String.format("%s;%s",df.format(values[0]),df.format(values[1]));
-	    byte[] bytes = msg.getBytes();
-	    return bytes;
+	public void display(final double[] tmp){
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				textVitesse.setText(tmp[0] + "m/s");
+				textDistance.setText(tmp[1] + "m");
+			}
+		});
 	}
+	
 
 }
