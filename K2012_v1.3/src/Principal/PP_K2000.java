@@ -17,14 +17,14 @@ import Mouvement.*;
 public class PP_K2000 {
 
 	//Eléments utilisés dans manoeuvre
-	public static double distance = 0.0;
-	public static DataOutputStream dos = null;
-	public static boolean isrunning = true;
+	static double distance = 0.0;
+	static DataOutputStream dos = null;
+	static boolean isrunning = false;
 
 	public static void main(String[] args) throws IOException{		
-		
+		isrunning = true;
 		//Elément par lequel on fait appel à tous les mouvements
-		final Manoeuvre man = new Manoeuvre();
+		final Manoeuvre man = new Manoeuvre(dos);
 		
 		//Partie Sensor
 		TouchSensor touchS = new TouchSensor(SensorPort.S4);
@@ -136,4 +136,15 @@ public class PP_K2000 {
 	    return doubles;
 	}
 
+	public static double getDistance(){
+		return distance;
+	}
+	
+	public static boolean getIsrunning(){
+		return isrunning;
+	}
+	
+	public static void setIsrunning(boolean bool){
+		isrunning = bool;
+	}
 }

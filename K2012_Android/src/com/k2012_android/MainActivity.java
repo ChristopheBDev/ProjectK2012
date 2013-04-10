@@ -1,14 +1,12 @@
 package com.k2012_android;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 import com.k2012_android.R;
 import android.os.Build;
 import android.os.Bundle;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 import android.view.*;
 import android.view.View.*;
@@ -186,7 +184,7 @@ public class MainActivity extends Activity {
 						bluetoothSoc = null;					
 					}
 				}*/
-				bluetoothSoc.deconnected();
+				bluetoothSoc.disconnect();
 				Log.d("K2012", "Deconnected " + bluetoothSoc.IsRunning());
 			}
 		}		

@@ -14,13 +14,13 @@ public class BluetoothSocketK2012 implements Runnable{
 	final String strnxt = "Nelthent";
 
 	BluetoothAdapter localAdapter;
-	public BluetoothSocket socket_nxt;
-	public BluetoothDevice nxt;
+	BluetoothSocket socket_nxt;
+	BluetoothDevice nxt;
 
 	OutputStream outStream;
-	public InputStream inStream;
-	private MainActivity mainActivity;
-	private boolean isRunning = false;
+	InputStream inStream;
+	MainActivity mainActivity;
+	boolean isRunning = false;
 	
 	public BluetoothSocketK2012(MainActivity mainActivity ){
 
@@ -48,10 +48,11 @@ public class BluetoothSocketK2012 implements Runnable{
 			       // read data into buffer
 			       inStream.read(bs);
 			       
+			       //Connversion bytes->String->double[]
 			       String str = new String(bs);
-			       Log.d("K2012", str);
 			       double[] db = toDouble(str);
 			       
+			       //Appel de la méthode d'affichage
 			       mainActivity.display(db);
 			       
 			} catch (IOException e) {
@@ -59,6 +60,7 @@ public class BluetoothSocketK2012 implements Runnable{
 			}
 		}
 		try{
+			//Fermeture des flux
 			outStream.close();
 			inStream.close();
 			socket_nxt.close();
@@ -67,43 +69,6 @@ public class BluetoothSocketK2012 implements Runnable{
 	       Log.e("K2012", e.getMessage());
 		}
 	}
-	
-	public void activerBT(){
-	    //If Bluetooth not enable then do it
-	    if(localAdapter != null){
-		    if(localAdapter.isEnabled()==false){
-		        localAdapter.enable();    
-		        try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-				}
-		    }
-	    }
-	}
-	public void deconnected(){
-		this.isRunning = false;
-
-		double[] info = { 1664.00, 0.00};
-		try {
-			send(info);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public void send(double[] tmp) throws IOException{
-			outStream.write(toByteArray(tmp), 0, toByteArray(tmp).length);
-	}
-
-	private byte[] toByteArray(double[] values) {
-		//Ecris un string pour la serialisation
-		DecimalFormat df = new DecimalFormat("0.000"); 
-	    String msg = String.format("%s;%s",df.format(values[0]),df.format(values[1]));
-	    byte[] bytes = msg.getBytes();
-	    return bytes;
-	}
-	
 	
 	public void connect()
 	{
@@ -129,13 +94,52 @@ public class BluetoothSocketK2012 implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}	
+	
+	public void disconnect(){
+		this.isRunning = false;
+
+		double[] info = { 1664.00, 0.00};
+		try {
+			send(info);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
+	public void send(double[] tmp) throws IOException{
+			outStream.write(toByteArray(tmp), 0, toByteArray(tmp).length);
+	}
+
 	public boolean IsRunning(){
 		return this.isRunning;
 	}
 	
-	public static double[] toDouble(String str) {		
+	private void activerBT(){
+	    //Sit le bluetooth n'est pas activé on l'active
+	    if(localAdapter != null){
+		    if(localAdapter.isEnabled()==false){
+		        localAdapter.enable();    
+		        try {
+		        	//Processus bloquant pour éviter d'utiliser le BT pendant son activation
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					Log.e("K2012", e.getMessage());
+				}
+		    }
+	    }
+	}
+	
+	private byte[] toByteArray(double[] values) {
+		//Ecris un string pour la serialisation
+		DecimalFormat df = new DecimalFormat("0.000"); 
+	    String msg = String.format("%s;%s",df.format(values[0]),df.format(values[1]));
+	    byte[] bytes = msg.getBytes();
+	    return bytes;
+	}
+		
+	private double[] toDouble(String str) {		
 		double[] doubles = new double[2];
 		String s1 = "";
 		String s2 = "";

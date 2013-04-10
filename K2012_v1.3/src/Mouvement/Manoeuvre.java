@@ -1,16 +1,21 @@
 package Mouvement;
 
+import java.io.DataOutputStream;
+
 import Principal.PP_K2000;
 import lejos.nxt.*;
 
 public class Manoeuvre {
 	
 	private float coefEcartRoues = 0.15F;
-	private int volume =10;
+	private int volume = 10;
 	private boolean son = false;
 	private Thread playMusic;
+	DataOutputStream dos = null;
 
-	public Manoeuvre(){
+	public Manoeuvre(DataOutputStream dos){
+		
+		this.dos = dos;
 		
 		//Permet de régler la vitesse d'accélération
 		/*
@@ -140,17 +145,17 @@ public class Manoeuvre {
 		}
 		
 		//Calcul de la vitesse en m/s
-		double[] tab = {(0.0055 * puissance)/10, PP_K2000.distance};
+		double[] tab = {(0.0055 * puissance)/10, PP_K2000.getDistance()};
 		//Renvoie de la vitesse en m/s
 		try {
 			byte[] byt = toByteArray(tab);
 
-			PP_K2000.dos.write(byt, 0, byt.length);
-			PP_K2000.dos.flush();
+			this.dos.write(byt, 0, byt.length);
+			this.dos.flush();
 			
 		} catch (Exception e) {
 			LCD.clear();
-			PP_K2000.isrunning = false;
+			PP_K2000.setIsrunning(false);
 			
 			//Arrête les moteurs de façon ralentie
 			Motor.B.flt();
@@ -158,6 +163,7 @@ public class Manoeuvre {
 		}
 		
 	}	
+	
 	public byte[] toByteArray(double[] values) {
 		//Ecrit un string pour la serialisation
 		String msg = new String(values[0] + ";" + values[1]);
@@ -165,7 +171,7 @@ public class Manoeuvre {
 	    return bytes;
 	}
 	
-	public void soundNyanCat(){
+	private void soundNyanCat(){
 		Sound.setVolume(volume);				
 		   
 	    int si = 987;
@@ -252,7 +258,7 @@ public class Manoeuvre {
 
 	}
 		
-	public void soundPapaNoel(){
+	private void soundPapaNoel(){
 		Sound.setVolume(volume);
 		try{
 			int re = 587;
@@ -309,7 +315,7 @@ public class Manoeuvre {
 		Sound.setVolume(0);
 	}
 
-	public void soundTetris(){
+	private void soundTetris(){
 		Sound.setVolume(volume);
 		 int ssol = 392;
 		 int la = 440;
@@ -384,6 +390,5 @@ public class Manoeuvre {
 	    }
 		Sound.setVolume(0);
 	}
-	
-	
+		
 }
