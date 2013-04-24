@@ -14,7 +14,6 @@ public class Manoeuvre {
 	DataOutputStream dos = null;
 
 	public Manoeuvre(DataOutputStream dos){
-		
 		this.dos = dos;
 		
 		//Permet de régler la vitesse d'accélération
