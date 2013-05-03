@@ -1,3 +1,9 @@
+/***
+ProjectK2012\K2012_v1.3
+By
+   Christophe Bocher
+   Stanislas Le Guennec
+***/
 package Principal;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

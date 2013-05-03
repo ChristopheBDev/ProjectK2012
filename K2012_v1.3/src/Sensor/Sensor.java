@@ -1,3 +1,9 @@
+/***
+ProjectK2012\K2012_v1.3
+By
+   Christophe Bocher
+   Stanislas Le Guennec
+***/
 package Sensor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.TouchSensor;

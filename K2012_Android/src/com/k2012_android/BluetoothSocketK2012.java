@@ -1,3 +1,9 @@
+/***
+ProjectK2012\K2012_Android
+By
+   Christophe Bocher
+   Stanislas Le Guennec
+***/
 package com.k2012_android;
 
 import java.io.*;
